@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matcha Stand POS</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4fff4;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+button {
+  padding: 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background-color: #b7e4c7;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background-color: #95d5b2;
+}
+
+.cart {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  min-height: 120px;
+  margin-bottom: 20px;
+}
+
+.total {
+  font-size: 24px;
+  margin: 15px 0;
+}
+
+.checkout {
+  background-color: #2d6a4f;
+  color: white;
+}
+
+.checkout:hover {
+  background-color: #1b4332;
+}
+
+.stock {
+  font-size: 14px;
+  display: block;
+  margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🍵 Matcha Stand POS</h1>
+
+<div class="menu">
+  <button onclick="addItem('Matcha', 6.50)">
+    Matcha<br>$6.50
+    <span class="stock" id="MatchaStock"></span>
+  </button>
+
+  <button onclick="addItem('Pistachio Matcha', 7.50)">
+    Pistachio Matcha<br>$7.50
+    <span class="stock" id="Pistachio MatchaStock"></span>
+  </button>
+
+  <button onclick="addItem('Cookies', 2.50)">
+    Cookies<br>$2.50
+    <span class="stock" id="CookiesStock"></span>
+  </button>
+</div>
+
+<div class="cart">
+  <h3>Current Order</h3>
+  <div id="orderList"></div>
+</div>
+
+<div class="total" id="totalDisplay">Total: $0.00</div>
+
+<button class="checkout" onclick="checkout()">Checkout</button>
+
+<script>
+let total = 0;
+let order = [];
+
+let defaultInventory = {
+  "Matcha": 20,
+  "Pistachio Matcha": 20,
+  "Cookies": 25
+};
+
+let inventory = JSON.parse(localStorage.getItem("inventory")) || defaultInventory;
+
+function saveInventory() {
+  localStorage.setItem("inventory", JSON.stringify(inventory));
+}
+
+function updateStockDisplay() {
+  document.getElementById("MatchaStock").innerText = "Stock: " + inventory["Matcha"];
+  document.getElementById("Pistachio MatchaStock").innerText = "Stock: " + inventory["Pistachio Matcha"];
+  document.getElementById("CookiesStock").innerText = "Stock: " + inventory["Cookies"];
+}
+
+function addItem(name, price) {
+  if (inventory[name] <= 0) {
+    alert(name + " is out of stock!");
+    return;
+  }
+
+  order.push({name, price});
+  total += price;
+  inventory[name]--;
+
+  saveInventory();
+  renderOrder();
+  updateStockDisplay();
+}
+
+function renderOrder() {
+  const orderList = document.getElementById("orderList");
+  orderList.innerHTML = "";
+
+  order.forEach(item => {
+    orderList.innerHTML += item.name + " - $" + item.price.toFixed(2) + "<br>";
+  });
+
+  document.getElementById("totalDisplay").innerText = "Total: $" + total.toFixed(2);
+}
+
+function checkout() {
+  if (order.length === 0) {
+    alert("No items in order.");
+    return;
+  }
+
+  alert("Order Complete! Total: $" + total.toFixed(2));
+  order = [];
+  total = 0;
+  renderOrder();
+}
+
+updateStockDisplay();
+</script>
+
+</body>
+</html>
