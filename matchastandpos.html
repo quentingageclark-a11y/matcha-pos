@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Matcha Stand POS</title>
+  <style>
+    body { font-family: Cambria; text-align: center; }
+    button { padding: 15px; margin: 10px; font-size: 18px; }
+    #total { font-size: 24px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h1> Matcha Stand</h1>
+
+<button onclick="addItem('Matcha', 6.50)">Matcha $6.50</button>
+<button onclick="addItem('Pistachio Matcha', 7.50)">Pistachio Matcha $7.50</button>
+<button onclick="addItem('Cookie', 2.50)">Cookie $2</button>
+
+<div id="order"></div>
+<div id="total">Total: $0</div>
+
+<script>
+let total = 0;
+let inventory = {
+  "Matcha": 20,
+  "Pistachio Matcha": 20,
+  "Cookie": 30
+};
+
+function addItem(item, price) {
+  if (inventory[item] <= 0) {
+    alert("Out of stock!");
+    return;
+  }
+
+  total += price;
+  inventory[item]--;
+
+  document.getElementById("order").innerHTML += item + " - $" + price + "<br>";
+  document.getElementById("total").innerText = "Total: $" + total;
+}
+</script>
+
+</body>
+</html>
